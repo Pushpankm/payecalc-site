@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+Sitemap: https://payecalc.co.uk/sitemap.xml

@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK PAYE Tax Calculator 2025/26 — Take Home Pay & National Insurance</title>
+<meta name="description" content="Free UK PAYE tax calculator 2025/26. Calculate your take home pay after income tax and National Insurance. Updated for 2025-2026 tax year. Covers England, Wales, Scotland & Northern Ireland.">
+<meta name="keywords" content="UK PAYE calculator, take home pay calculator UK 2026, income tax calculator UK, salary calculator UK 2025 2026, national insurance calculator, UK tax calculator 2026, PAYE tax calculator England, Scotland income tax calculator, salary after tax UK, how much tax do I pay UK">
+<link rel="canonical" href="https://payecalc.co.uk/">
+<meta property="og:title" content="UK PAYE Tax Calculator 2025/26">
+<meta property="og:description" content="Calculate your exact take-home pay after income tax and NI. Updated for 2025/26 tax year.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0B1C3D;
+  --navy2: #132848;
+  --red: #C8102E;
+  --gold: #B8964E;
+  --white: #FAFAF8;
+  --off: #F3F1EE;
+  --muted: #6B7280;
+  --border: #E2DDD6;
+  --green: #1A7F4F;
+  --text: #1C1C1C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);font-size:16px;line-height:1.6}
+
+/* NAV */
+nav{background:var(--navy);padding:0 2rem;display:flex;justify-content:space-between;align-items:center;height:60px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Fraunces',serif;font-size:20px;color:var(--white);font-weight:600;letter-spacing:-0.5px}
+.nav-logo span{color:var(--gold)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.3);color:var(--white);padding:6px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-ghost:hover{border-color:var(--white)}
+.btn-primary{background:var(--red);border:none;color:var(--white);padding:7px 18px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.btn-primary:hover{background:#a50d25}
+
+/* HERO */
+.hero{background:var(--navy);padding:3rem 2rem 0;text-align:center}
+.hero-eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:500}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(2rem,5vw,3.2rem);color:var(--white);font-weight:600;line-height:1.15;max-width:700px;margin:0 auto 14px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{color:rgba(255,255,255,0.65);font-size:15px;max-width:500px;margin:0 auto 2rem}
+.tax-year-badge{display:inline-block;background:rgba(184,150,78,0.15);border:1px solid rgba(184,150,78,0.4);color:var(--gold);padding:4px 14px;border-radius:99px;font-size:12px;font-weight:500;margin-bottom:1.5rem}
+
+/* CALCULATOR CARD */
+.calc-wrap{max-width:820px;margin:0 auto;padding-bottom:0}
+.calc-card{background:var(--white);border-radius:16px 16px 0 0;padding:2rem;box-shadow:0 -4px 40px rgba(0,0,0,0.15)}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:600px){.field-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.field input,.field select{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus{border-color:var(--navy)}
+.field-prefix{position:relative}
+.field-prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
+.field-prefix input{padding-left:26px}
+
+.calc-btn{width:100%;padding:13px;background:var(--navy);color:var(--white);border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;transition:background .15s}
+.calc-btn:hover{background:var(--navy2)}
+
+/* RESULTS */
+.results{margin-top:1.5rem;display:none}
+.results.show{display:block}
+.take-home-hero{text-align:center;padding:1.5rem;background:var(--navy);border-radius:12px;margin-bottom:1rem;position:relative}
+.take-home-hero .th-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.55);margin-bottom:6px}
+.take-home-hero .th-amount{font-family:'Fraunces',serif;font-size:2.8rem;color:var(--white);font-weight:600}
+.take-home-hero .th-period{font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px}
+
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+@media(max-width:500px){.results-grid{grid-template-columns:1fr 1fr}}
+.res-card{background:var(--off);border-radius:10px;padding:.9rem 1rem}
+.res-card .rc-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.res-card .rc-val{font-size:17px;font-weight:500;color:var(--text)}
+.res-card .rc-sub{font-size:11px;color:var(--muted)}
+
+.breakdown{border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.breakdown-header{background:var(--off);padding:.75rem 1.2rem;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1.2rem;border-top:1px solid var(--border)}
+.breakdown-row .br-label{font-size:14px;color:var(--text)}
+.breakdown-row .br-label small{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.breakdown-row .br-val{font-size:14px;font-weight:500;color:var(--text)}
+.breakdown-row .br-val.red{color:var(--red)}
+.breakdown-row .br-val.green{color:var(--green)}
+.breakdown-row.total{background:rgba(11,28,61,0.04)}
+
+/* LOCK OVERLAY */
+.lock-overlay{position:relative;margin-top:1rem}
+.lock-blur{filter:blur(5px);pointer-events:none;user-select:none}
+.lock-gate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(250,250,248,0.85);backdrop-filter:blur(2px);border-radius:12px;z-index:2;text-align:center;padding:2rem}
+.lock-icon{font-size:32px;margin-bottom:12px}
+.lock-gate h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:6px}
+.lock-gate p{font-size:13px;color:var(--muted);max-width:280px;margin-bottom:1.2rem}
+.lock-gate .price-tag{font-size:24px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.lock-gate .price-tag span{font-size:13px;font-weight:400;color:var(--muted)}
+.btn-unlock{background:var(--red);color:var(--white);border:none;padding:11px 28px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-unlock:hover{background:#a50d25}
+
+/* USES COUNTER */
+.uses-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:13px;color:var(--muted)}
+.uses-dots{display:flex;gap:4px}
+.use-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.use-dot.used{background:var(--green)}
+
+/* PRO FEATURES */
+.pro-features{margin-top:.75rem;display:flex;gap:8px;flex-wrap:wrap}
+.pf-tag{font-size:11px;padding:3px 9px;border-radius:99px;background:rgba(26,127,79,0.1);color:var(--green);border:1px solid rgba(26,127,79,0.2)}
+
+/* BAND BARS */
+.band-bars{margin-top:1rem}
+.band-row{margin-bottom:8px}
+.band-label-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:3px}
+.band-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.band-fill{height:100%;border-radius:99px;transition:width .6s ease}
+
+/* MAIN CONTENT */
+main{max-width:820px;margin:0 auto;padding:3rem 2rem}
+
+/* FEATURE BLOCKS */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-bottom:3rem}
+.feat{padding:1.5rem;border:1px solid var(--border);border-radius:12px}
+.feat-icon{font-size:24px;margin-bottom:.75rem}
+.feat h3{font-size:15px;font-weight:500;margin-bottom:.4rem}
+.feat p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* FAQ */
+.faq-section h2{font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:1.5rem}
+.faq{border-top:1px solid var(--border)}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{padding:.9rem 0;font-size:15px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q::after{content:'+';font-size:20px;color:var(--muted);font-weight:300}
+.faq-item.open .faq-q::after{content:'−'}
+.faq-a{font-size:14px;color:var(--muted);line-height:1.7;padding-bottom:.9rem;display:none}
+.faq-item.open .faq-a{display:block}
+
+/* SEO CONTENT */
+.seo-section{background:var(--off);padding:3rem 2rem;border-top:1px solid var(--border)}
+.seo-section .inner{max-width:820px;margin:0 auto}
+.seo-section h2{font-family:'Fraunces',serif;font-size:1.6rem;margin-bottom:1rem}
+.seo-section h3{font-size:15px;font-weight:500;margin:.9rem 0 .4rem}
+.seo-section p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:.7rem}
+.keyword-cloud{display:flex;flex-wrap:wrap;gap:6px;margin-top:1rem}
+.kw{font-size:11px;padding:3px 10px;background:var(--white);border:1px solid var(--border);border-radius:99px;color:var(--muted)}
+
+/* PRICING */
+.pricing-section{text-align:center;padding:3rem 2rem;background:var(--white)}
+.pricing-section h2{font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:.5rem}
+.pricing-section p{color:var(--muted);margin-bottom:2rem;font-size:14px}
+.plan-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:600px;margin:0 auto}
+@media(max-width:500px){.plan-cards{grid-template-columns:1fr}}
+.plan{border:1.5px solid var(--border);border-radius:14px;padding:1.75rem;text-align:left}
+.plan.featured{border-color:var(--navy);border-width:2px}
+.plan-name{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:500;color:var(--muted);margin-bottom:.5rem}
+.plan-price{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:600;color:var(--navy);margin-bottom:.25rem}
+.plan-price span{font-size:14px;font-weight:400;color:var(--muted)}
+.plan-desc{font-size:13px;color:var(--muted);margin-bottom:1.2rem}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:1.5rem}
+.plan-features li{font-size:13px;display:flex;gap:7px;align-items:flex-start}
+.plan-features li::before{content:'✓';color:var(--green);font-weight:600;flex-shrink:0}
+.plan-btn{width:100%;padding:11px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:none}
+.plan-btn.navy{background:var(--navy);color:var(--white)}
+.plan-btn.outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+
+/* FOOTER */
+footer{background:var(--navy);padding:2rem;text-align:center;color:rgba(255,255,255,0.4);font-size:12px}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;margin:0 8px}
+footer a:hover{color:var(--white)}
+
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:var(--white);border-radius:16px;padding:2rem;width:100%;max-width:420px;position:relative}
+.modal h2{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:.3rem}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);line-height:1}
+.form-field{margin-bottom:1rem}
+.form-field label{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:5px}
+.form-field input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none}
+.form-field input:focus{border-color:var(--navy)}
+.modal-btn{width:100%;padding:12px;background:var(--navy);color:var(--white);border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.5rem}
+.modal-btn:hover{background:var(--navy2)}
+.modal-switch{text-align:center;margin-top:1rem;font-size:13px;color:var(--muted)}
+.modal-switch a{color:var(--navy);cursor:pointer;font-weight:500}
+.error-msg{color:var(--red);font-size:12px;margin-top:6px;display:none}
+
+/* PAYPAL SECTION */
+.paypal-section{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.paypal-section h3{font-size:14px;font-weight:500;margin-bottom:.75rem;text-align:center}
+.paypal-btn{width:100%;background:#FFB300;border:none;padding:12px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;color:#111;display:flex;align-items:center;justify-content:center;gap:8px}
+.paypal-btn:hover{background:#E6A000}
+.paypal-logo{font-weight:800;font-style:italic}
+.or-divider{text-align:center;font-size:12px;color:var(--muted);margin:.75rem 0;position:relative}
+.or-divider::before,.or-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+.or-divider::before{left:0}.or-divider::after{right:0}
+.crypto-btn{width:100%;background:#F5A623;border:none;padding:11px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;color:#111}
+.crypto-btn:hover{background:#E09818}
+
+/* ADMIN */
+.admin-panel{max-width:900px;margin:0 auto;padding:2rem}
+.admin-panel h1{font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:.5rem}
+.admin-panel .a-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+@media(max-width:600px){.admin-stats{grid-template-columns:1fr 1fr}}
+.astat{background:var(--off);border-radius:10px;padding:1rem}
+.astat .as-n{font-size:1.8rem;font-weight:600;color:var(--navy);font-family:'Fraunces',serif}
+.astat .as-l{font-size:12px;color:var(--muted)}
+.admin-table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--off)}
+th{text-align:left;padding:.6rem 1rem;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border);color:var(--text)}
+.badge-paid{background:rgba(26,127,79,0.1);color:var(--green);border:1px solid rgba(26,127,79,0.25);font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.badge-free{background:var(--off);color:var(--muted);border:1px solid var(--border);font-size:11px;padding:2px 8px;border-radius:99px}
+.admin-empty{text-align:center;padding:2rem;color:var(--muted);font-size:14px}
+.admin-refresh{padding:7px 16px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--white)}
+.admin-refresh:hover{background:var(--off)}
+.admin-export{padding:7px 16px;background:var(--navy);color:var(--white);border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.page{display:none}.page.active{display:block}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 20px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.user-tag{font-size:12px;background:rgba(184,150,78,0.15);color:var(--gold);border:1px solid rgba(184,150,78,0.3);padding:2px 8px;border-radius:99px;margin-left:8px}
+.download-row{display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap}
+.btn-download{flex:1;min-width:140px;padding:11px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s}
+.btn-dl-pdf{background:var(--navy);color:var(--white);border:none}
+.btn-dl-pdf:hover{background:var(--navy2)}
+.btn-dl-csv{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+.btn-dl-csv:hover{background:var(--off)}
+.btn-dl-locked{background:var(--off);color:var(--muted);border:1.5px solid var(--border);cursor:not-allowed;opacity:.6}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">PAYE<span>Calc</span></div>
+  <div class="nav-actions" id="navActions">
+    <button class="btn-ghost" onclick="showModal('login')">Sign in</button>
+    <button class="btn-primary" onclick="showModal('signup')">Get started free</button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MAIN PAGE -->
+<div class="page active" id="mainPage">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="calc-wrap">
+    <div class="tax-year-badge">Tax Year 2025/26 — Updated April 2026</div>
+    <p class="hero-eyebrow">UK PAYE Tax Calculator</p>
+    <h1>Your <em>exact</em> take-home pay after tax &amp; NI</h1>
+    <p class="hero-sub">Calculate income tax, National Insurance, student loan, and pension deductions — 2025/26 rates.</p>
+
+    <!-- CALCULATOR CARD -->
+    <div class="calc-card">
+
+      <div class="uses-bar" id="usesBar">
+        <span>Free calculations remaining:</span>
+        <div class="uses-dots">
+          <div class="use-dot" id="d0"></div>
+          <div class="use-dot" id="d1"></div>
+          <div class="use-dot" id="d2"></div>
+        </div>
+        <span id="usesLeft">3 of 3</span>
+      </div>
+
+      <div class="field-grid">
+        <div class="field field-prefix">
+          <label>Annual Salary (Gross)</label>
+          <span>£</span>
+          <input type="number" id="salary" placeholder="35000" value="" min="0" max="1000000">
+        </div>
+        <div class="field">
+          <label>Pay Frequency</label>
+          <select id="freq">
+            <option value="annual">Annual</option>
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+            <option value="daily">Daily (5-day week)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tax Region</label>
+          <select id="region">
+            <option value="england">England, Wales & N. Ireland</option>
+            <option value="scotland">Scotland</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Student Loan</label>
+          <select id="studentLoan">
+            <option value="none">None</option>
+            <option value="plan1">Plan 1 (pre-2012)</option>
+            <option value="plan2">Plan 2 (2012–2023)</option>
+            <option value="plan4">Plan 4 (Scotland)</option>
+            <option value="plan5">Plan 5 (2023+)</option>
+          </select>
+        </div>
+        <div class="field field-prefix">
+          <label>Pension Contribution</label>
+          <span>%</span>
+          <input type="number" id="pension" placeholder="0" value="0" min="0" max="100">
+        </div>
+        <div class="field">
+          <label>Tax Code</label>
+          <input type="text" id="taxCode" placeholder="1257L" value="1257L">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">Calculate my take-home pay →</button>
+
+      <!-- RESULTS -->
+      <div class="results" id="results">
+        <div class="take-home-hero">
+          <div class="th-label">Annual take-home pay</div>
+          <div class="th-amount" id="takeHomeAmount">£0</div>
+          <div class="th-period" id="takeHomePeriod">£0/month · £0/week</div>
+        </div>
+        <div class="results-grid">
+          <div class="res-card">
+            <div class="rc-label">Income Tax</div>
+            <div class="rc-val" id="r-tax">£0</div>
+            <div class="rc-sub" id="r-tax-eff">0% effective rate</div>
+          </div>
+          <div class="res-card">
+            <div class="rc-label">National Insurance</div>
+            <div class="rc-val" id="r-ni">£0</div>
+            <div class="rc-sub">Employee Class 1</div>
+          </div>
+          <div class="res-card">
+            <div class="rc-label">Gross Salary</div>
+            <div class="rc-val" id="r-gross">£0</div>
+            <div class="rc-sub" id="r-gross-sub">Annual</div>
+          </div>
+        </div>
+
+        <!-- FULL BREAKDOWN — locked for non-subscribers -->
+        <div class="lock-overlay" id="lockOverlay">
+          <div id="breakdownContent">
+            <div class="breakdown">
+              <div class="breakdown-header">Detailed breakdown — annual</div>
+              <div class="breakdown-row">
+                <div class="br-label">Gross salary<small>Before any deductions</small></div>
+                <div class="br-val green" id="bd-gross">£35,000</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Pension contribution<small>Salary sacrifice</small></div>
+                <div class="br-val red" id="bd-pension">−£0</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Personal allowance<small>Tax-free amount</small></div>
+                <div class="br-val" id="bd-pa">£12,570</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Taxable income<small>After allowance</small></div>
+                <div class="br-val" id="bd-taxable">£0</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Basic rate tax (20%)<small>Up to £37,700 taxable</small></div>
+                <div class="br-val red" id="bd-basic">−£0</div>
+              </div>
+              <div class="breakdown-row" id="higherRow">
+                <div class="br-label">Higher rate tax (40%)<small>Above £50,270</small></div>
+                <div class="br-val red" id="bd-higher">−£0</div>
+              </div>
+              <div class="breakdown-row" id="additionalRow">
+                <div class="br-label">Additional rate tax (45%)<small>Above £125,140</small></div>
+                <div class="br-val red" id="bd-additional">−£0</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">National Insurance<small>Class 1 employee (8% / 2%)</small></div>
+                <div class="br-val red" id="bd-ni">−£0</div>
+              </div>
+              <div class="breakdown-row" id="slRow" style="display:none">
+                <div class="br-label">Student loan repayment<small id="slPlanLabel">Plan 2</small></div>
+                <div class="br-val red" id="bd-sl">−£0</div>
+              </div>
+              <div class="breakdown-row total">
+                <div class="br-label"><strong>Take-home pay</strong><small>Annual net income</small></div>
+                <div class="br-val green" id="bd-takehome"><strong>£0</strong></div>
+              </div>
+            </div>
+
+            <!-- MONTHLY / WEEKLY / DAILY TABLE -->
+            <div class="breakdown" style="margin-top:1rem">
+              <div class="breakdown-header">Take-home by period</div>
+              <div class="breakdown-row">
+                <div class="br-label">Annual</div>
+                <div class="br-val" id="p-annual">£0</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Monthly</div>
+                <div class="br-val" id="p-monthly">£0</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Weekly</div>
+                <div class="br-val" id="p-weekly">£0</div>
+              </div>
+              <div class="breakdown-row">
+                <div class="br-label">Daily</div>
+                <div class="br-val" id="p-daily">£0</div>
+              </div>
+            </div>
+
+            <!-- BAND VISUALISATION -->
+            <div class="band-bars" style="padding:1rem;border:1.5px solid var(--border);border-radius:12px;margin-top:1rem">
+              <div style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:12px">Tax band breakdown</div>
+              <div class="band-row" id="bandPersonal">
+                <div class="band-label-row"><span>Personal allowance (0%)</span><span id="bv-pa">£12,570</span></div>
+                <div class="band-track"><div class="band-fill" id="bf-pa" style="background:#1A7F4F;width:0%"></div></div>
+              </div>
+              <div class="band-row">
+                <div class="band-label-row"><span>Basic rate (20%)</span><span id="bv-basic">£0</span></div>
+                <div class="band-track"><div class="band-fill" id="bf-basic" style="background:#B8964E;width:0%"></div></div>
+              </div>
+              <div class="band-row" id="bandHigher">
+                <div class="band-label-row"><span>Higher rate (40%)</span><span id="bv-higher">£0</span></div>
+                <div class="band-track"><div class="band-fill" id="bf-higher" style="background:#C8102E;width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOCK GATE — shown when over free limit and not subscribed -->
+          <div class="lock-gate" id="lockGate" style="display:none">
+            <div class="lock-icon">🔒</div>
+            <h3>Unlock full breakdown</h3>
+            <p>See your complete tax band breakdown, monthly/weekly/daily figures, and save your results.</p>
+            <div class="price-tag">£3.99 <span>/ month</span></div>
+            <button class="btn-unlock" onclick="showModal('payment')">Unlock with PayPal</button>
+            <div style="margin-top:.75rem;font-size:12px;color:var(--muted)">Cancel anytime · Secure payment</div>
+          </div>
+        </div>
+
+        
+        <div class="download-row" id="downloadRow" style="display:none">
+          <button class="btn-download btn-dl-pdf" onclick="downloadPDF()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF report
+          </button>
+          <button class="btn-download btn-dl-csv" onclick="downloadCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+        </div>
+        <div class="pro-features" id="proFeatures" style="display:none">
+          <span class="pf-tag">✓ Full breakdown</span>
+          <span class="pf-tag">✓ All periods</span>
+          <span class="pf-tag">✓ Tax band chart</span>
+          <span class="pf-tag">✓ PDF export</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main>
+  <!-- FEATURES -->
+  <div class="feature-grid">
+    <div class="feat">
+      <div class="feat-icon">⚡</div>
+      <h3>Updated for 2025/26</h3>
+      <p>All rates verified directly from HMRC. Personal allowance £12,570, NI at 8%, and all threshold changes from April 2025.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
+      <h3>Scotland included</h3>
+      <p>Full Scottish income tax calculation with all six bands — from 19% starter rate to 48% top rate.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🎓</div>
+      <h3>Student loan plans</h3>
+      <p>Covers Plan 1, 2, 4, and 5 repayments with the correct threshold for each. Know exactly what you repay.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">💼</div>
+      <h3>Pension salary sacrifice</h3>
+      <p>Enter your pension % to see the real impact on your take-home pay, tax, and NI contributions.</p>
+    </div>
+  </div>
+
+  <!-- FAQ — loaded with SEO keywords -->
+  <div class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq" id="faq">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is PAYE and how does the UK PAYE tax calculator work?</div>
+        <div class="faq-a">PAYE (Pay As You Earn) is the system HMRC uses to collect income tax and National Insurance contributions directly from your employer before you receive your salary. Our UK PAYE tax calculator for 2025/26 uses the official tax bands and NI thresholds to show your exact take-home pay after all deductions.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What are the UK income tax bands for 2025/26?</div>
+        <div class="faq-a">For England, Wales and Northern Ireland in 2025/26: Personal Allowance (0%) up to £12,570. Basic rate (20%) on income £12,571–£50,270. Higher rate (40%) on income £50,271–£125,140. Additional rate (45%) on income above £125,140. Note: if you earn over £100,000, your personal allowance reduces by £1 for every £2 earned above this, creating an effective 60% marginal rate between £100,000 and £125,140.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How much National Insurance do I pay in 2025/26?</div>
+        <div class="faq-a">For 2025/26, employees pay 8% National Insurance on earnings between £12,570 and £50,270 per year, and 2% on earnings above £50,270. These rates are unchanged from 2024/25. Employer NI increased to 15% from April 2025, but this does not affect your take-home pay directly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is the take-home pay on a £30,000 salary in the UK?</div>
+        <div class="faq-a">On a £30,000 salary in 2025/26 (England), your estimated take-home pay is approximately £24,300 per year (£2,025/month). You would pay around £3,486 in income tax and £1,394 in National Insurance. Use our calculator above for your exact figures including any pension or student loan deductions.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is the take-home pay on a £50,000 salary in the UK?</div>
+        <div class="faq-a">On a £50,000 salary in 2025/26 (England), your estimated take-home pay is approximately £37,200 per year (£3,100/month). You would pay approximately £7,540 in income tax and £3,000 in National Insurance. Enter your exact salary in the calculator for a full personalised breakdown.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Does salary sacrifice reduce my tax and National Insurance?</div>
+        <div class="faq-a">Yes — pension salary sacrifice reduces your gross pay before tax and NI are calculated. This means you pay less income tax and less National Insurance, which makes it more efficient than a standard pension contribution. Enter your pension percentage in our calculator to see the full impact on your take-home pay.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is the UK income tax calculator for Scotland?</div>
+        <div class="faq-a">Scotland has its own income tax bands set by the Scottish Parliament. For 2025/26, Scottish taxpayers pay: 19% starter rate (£12,571–£15,397), 20% basic rate (£15,398–£27,491), 21% intermediate rate (£27,492–£43,662), 42% higher rate (£43,663–£75,000), 45% advanced rate (£75,001–£125,140), and 48% top rate above £125,140. Select "Scotland" in our calculator above.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What does my tax code 1257L mean?</div>
+        <div class="faq-a">Tax code 1257L is the most common UK tax code and means you have the standard Personal Allowance of £12,570. The number 1257 represents the allowance divided by 10. The letter L means you're entitled to the basic personal allowance. If your tax code is different, it may mean you have additional allowances, benefits in kind, or owe tax from a previous year.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- PRICING -->
+<section class="pricing-section">
+  <h2>Simple, transparent pricing</h2>
+  <p>Start free. Upgrade when you need the full breakdown.</p>
+  <div class="plan-cards">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">£0 <span>forever</span></div>
+      <div class="plan-desc">Perfect for a quick salary check.</div>
+      <ul class="plan-features">
+        <li>3 free calculations</li>
+        <li>Annual take-home figure</li>
+        <li>Tax and NI totals</li>
+        <li>All UK regions</li>
+      </ul>
+      <button class="plan-btn outline" onclick="document.getElementById('salary').focus()">Start calculating</button>
+    </div>
+    <div class="plan featured">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">£3.99 <span>/ month</span></div>
+      <div class="plan-desc">For employees who need the full picture.</div>
+      <ul class="plan-features">
+        <li>Unlimited calculations</li>
+        <li>Full tax band breakdown</li>
+        <li>Monthly, weekly & daily figures</li>
+        <li>Pension salary sacrifice</li>
+        <li>All student loan plans</li>
+        <li>PDF export & save results</li>
+        <li>Scotland tax bands</li>
+      </ul>
+      <button class="plan-btn navy" onclick="showModal('payment')">Unlock with PayPal</button>
+    </div>
+  </div>
+</section>
+
+<!-- SEO CONTENT -->
+<section class="seo-section">
+  <div class="inner">
+    <h2>UK PAYE Tax Calculator 2025/26 — Everything you need to know</h2>
+    <p>Our <strong>UK PAYE tax calculator</strong> is updated for the <strong>2025 to 2026 tax year</strong> (6 April 2025 to 5 April 2026) and uses the official HMRC rates and thresholds. Whether you want to know your <strong>take-home pay after tax</strong>, understand your <strong>National Insurance contributions</strong>, or compare the impact of a pay rise, our <strong>salary calculator UK 2026</strong> gives you a complete picture in seconds.</p>
+
+    <h3>Income tax calculator UK 2025/26</h3>
+    <p>The UK income tax system uses progressive bands. Your first £12,570 is tax-free (your personal allowance). You then pay 20% basic rate on the next £37,700, 40% higher rate between £50,271 and £125,140, and 45% additional rate above that. Our <strong>income tax calculator for England, Wales and Northern Ireland</strong> handles all of this automatically, including the personal allowance taper for higher earners.</p>
+
+    <h3>National Insurance calculator 2026</h3>
+    <p>For 2025/26, employees pay <strong>8% Class 1 National Insurance</strong> on weekly earnings between £242 and £967 (annual: £12,570–£50,270), and 2% above that. Our <strong>National Insurance calculator UK</strong> shows your exact NI liability alongside your income tax, so you see your true total tax burden.</p>
+
+    <h3>Scottish income tax calculator</h3>
+    <p>Scottish taxpayers have six income tax bands instead of three. If you live in Scotland, switch to the Scotland mode in our <strong>PAYE calculator Scotland</strong> to get the correct figures using the Scottish rate of income tax (SRIT), which differs from England, Wales, and Northern Ireland for earnings above around £28,000.</p>
+
+    <h3>Salary after tax UK — common searches</h3>
+    <p>Every year, millions of UK workers search for their exact take-home pay. Common searches include <em>£25,000 salary take home UK</em>, <em>£40,000 salary after tax calculator</em>, <em>£60,000 take home pay UK 2026</em>, <em>£80,000 salary after tax England</em>, and <em>£100,000 income tax UK</em>. Our calculator handles all of these and more — including the personal allowance trap between £100,000 and £125,140.</p>
+
+    <div class="keyword-cloud">
+      <span class="kw">PAYE calculator 2025 2026</span>
+      <span class="kw">take home pay calculator UK</span>
+      <span class="kw">UK salary calculator 2026</span>
+      <span class="kw">income tax calculator England</span>
+      <span class="kw">NI calculator 2026</span>
+      <span class="kw">salary after tax UK</span>
+      <span class="kw">Scottish income tax calculator</span>
+      <span class="kw">student loan repayment calculator</span>
+      <span class="kw">salary sacrifice pension calculator</span>
+      <span class="kw">£50000 take home pay UK</span>
+      <span class="kw">how much tax on £30000 UK</span>
+      <span class="kw">higher rate tax calculator UK</span>
+      <span class="kw">UK tax bands 2025/26</span>
+      <span class="kw">national insurance 2026 calculator</span>
+      <span class="kw">HMRC PAYE calculator</span>
+      <span class="kw">take home pay after pension UK</span>
+      <span class="kw">tax calculator England Wales</span>
+      <span class="kw">free UK tax calculator</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:.75rem">
+    <a href="#">About</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms</a>
+  </div>
+  <div>© 2026 PAYECalc · All tax rates sourced from HMRC · Not financial advice</div>
+</footer>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="page" id="adminPage">
+  <nav>
+    <div class="nav-logo">PAYE<span>Calc</span> <span style="font-size:11px;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-weight:400">Admin</span></div>
+    <div class="nav-actions">
+      <button class="btn-ghost" onclick="showPage('main')">← Back to site</button>
+    </div>
+  </nav>
+  <div class="admin-panel">
+    <h1>Admin dashboard</h1>
+    <p class="a-sub">User management — login data and payment status</p>
+    <div class="admin-stats" id="adminStats"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-size:14px;font-weight:500">All users</div>
+      <div style="display:flex;gap:8px">
+        <button class="admin-refresh" onclick="renderAdmin()">Refresh</button>
+        <button class="admin-export" onclick="exportCSV()">Export CSV</button>
+      </div>
+    </div>
+    <div class="admin-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Signed up</th>
+            <th>Status</th>
+            <th>Plan</th>
+            <th>Calculations</th>
+            <th>Last active</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+      <div class="admin-empty" id="adminEmpty" style="display:none">No users yet. Share your site to get your first signups.</div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-bg" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">×</button>
+    <h2>Welcome back</h2>
+    <p>Sign in to access your saved calculations.</p>
+    <div class="form-field">
+      <label>Email address</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com">
+    </div>
+    <div class="form-field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <div class="error-msg" id="loginError">Invalid email or password.</div>
+    <button class="modal-btn" onclick="doLogin()">Sign in</button>
+    <div class="modal-switch">Don't have an account? <a onclick="switchModal('login','signup')">Create one free →</a></div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-bg" id="signupModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signup')">×</button>
+    <h2>Create your account</h2>
+    <p>Free forever. Upgrade when you need more.</p>
+    <div class="form-field">
+      <label>Full name</label>
+      <input type="text" id="signupName" placeholder="Alex Johnson">
+    </div>
+    <div class="form-field">
+      <label>Email address</label>
+      <input type="email" id="signupEmail" placeholder="you@example.com">
+    </div>
+    <div class="form-field">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="At least 8 characters">
+    </div>
+    <div class="error-msg" id="signupError">Account already exists. Please sign in.</div>
+    <button class="modal-btn" onclick="doSignup()">Create account</button>
+    <div class="modal-switch">Already have an account? <a onclick="switchModal('signup','login')">Sign in →</a></div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-bg" id="paymentModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('payment')">×</button>
+    <h2>Unlock Pro</h2>
+    <p>Full tax breakdown, all periods, PDF export. £3.99/month.</p>
+    <div style="background:var(--off);border-radius:10px;padding:1rem;margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px"><span>PAYECalc Pro</span><span style="font-weight:500">£3.99/mo</span></div>
+      <div style="font-size:12px;color:var(--muted)">Billed monthly · Cancel anytime · No hidden fees</div>
+    </div>
+    <div class="paypal-section">
+      <h3>Pay securely with</h3>
+      <button class="paypal-btn" onclick="handlePayPal()">
+        <span class="paypal-logo" style="font-family:Arial,sans-serif;color:#003087">Pay<span style="color:#009cde">Pal</span></span>
+        Pay with PayPal — £3.99/mo
+      </button>
+      <div class="or-divider">or</div>
+      <button class="crypto-btn" onclick="handleCrypto()">Pay with Binance Pay (USDT/BTC)</button>
+    </div>
+    <div style="text-align:center;margin-top:1rem;font-size:11px;color:var(--muted)">🔒 Secure payment · Instant activation · Cancel anytime</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA STORAGE
+// ============================================================
+function getUsers(){try{return JSON.parse(localStorage.getItem('payecalc_users')||'[]')}catch{return[]}}
+function saveUsers(u){localStorage.setItem('payecalc_users',JSON.stringify(u))}
+function getCurrentUser(){try{return JSON.parse(localStorage.getItem('payecalc_current')||'null')}catch{return null}}
+function setCurrentUser(u){localStorage.setItem('payecalc_current',JSON.stringify(u))}
+function getUses(){return parseInt(localStorage.getItem('payecalc_uses')||'0')}
+function incUses(){localStorage.setItem('payecalc_uses',getUses()+1)}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function showModal(name){document.getElementById(name+'Modal').classList.add('show')}
+function closeModal(name){document.getElementById(name+'Modal').classList.remove('show')}
+function switchModal(from,to){closeModal(from);setTimeout(()=>showModal(to),150)}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(name+'Page').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+
+function updateNav(){
+  const user=getCurrentUser();
+  const nav=document.getElementById('navActions');
+  if(user){
+    nav.innerHTML=`
+      <span style="font-size:13px;color:rgba(255,255,255,0.6)">${user.name||user.email.split('@')[0]}</span>
+      ${user.paid?'<span class="user-tag">Pro</span>':'<button class="btn-primary" onclick="showModal(\'payment\')">Upgrade £3.99</button>'}
+      <button class="btn-ghost" onclick="doLogout()">Sign out</button>
+    `;
+  }else{
+    nav.innerHTML=`
+      <button class="btn-ghost" onclick="showModal('login')">Sign in</button>
+      <button class="btn-primary" onclick="showModal('signup')">Get started free</button>
+    `;
+  }
+}
+
+function updateUsesDots(){
+  const uses=getUses();
+  const user=getCurrentUser();
+  const bar=document.getElementById('usesBar');
+  if(user&&user.paid){bar.style.display='none';return;}
+  [0,1,2].forEach(i=>document.getElementById('d'+i).className='use-dot'+(i<uses?' used':''));
+  document.getElementById('usesLeft').textContent=(Math.max(0,3-uses))+' of 3';
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function doSignup(){
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('signupPassword').value;
+  const err=document.getElementById('signupError');
+  err.style.display='none';
+  if(!email||!pass||pass.length<6){err.textContent='Please fill all fields (min 6 char password).';err.style.display='block';return;}
+  const users=getUsers();
+  if(users.find(u=>u.email===email)){err.style.display='block';return;}
+  const newUser={id:Date.now(),name,email,password:btoa(pass),paid:false,plan:'free',signedUp:new Date().toISOString(),lastActive:new Date().toISOString(),calcs:0};
+  users.push(newUser);
+  saveUsers(users);
+  const safe={...newUser};delete safe.password;
+  setCurrentUser(safe);
+  closeModal('signup');
+  updateNav();
+  toast('Welcome to PAYECalc, '+( name||email.split('@')[0])+'!');
+}
+
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('loginPassword').value;
+  const err=document.getElementById('loginError');
+  err.style.display='none';
+  const users=getUsers();
+  const user=users.find(u=>u.email===email&&u.password===btoa(pass));
+  if(!user){err.style.display='block';return;}
+  user.lastActive=new Date().toISOString();
+  saveUsers(users);
+  const safe={...user};delete safe.password;
+  setCurrentUser(safe);
+  closeModal('login');
+  updateNav();
+  updateUsesDots();
+  toast('Welcome back, '+(user.name||email.split('@')[0])+'!');
+}
+
+function doLogout(){
+  setCurrentUser(null);
+  updateNav();
+  updateUsesDots();
+  toast('You\'ve been signed out.');
+}
+
+function activatePro(user){
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.email===user.email);
+  if(idx>-1){users[idx].paid=true;users[idx].plan='pro';saveUsers(users);}
+  const updated={...user,paid:true,plan:'pro'};
+  setCurrentUser(updated);
+  updateNav();
+  document.getElementById('lockGate').style.display='none';
+  document.getElementById('breakdownContent').classList.remove('lock-blur');
+  document.getElementById('proFeatures').style.display='flex';
+  toast('Pro unlocked! Full breakdown now available.');
+}
+
+// ============================================================
+// PAYMENTS
+// ============================================================
+function handlePayPal(){
+  const user=getCurrentUser();
+  if(!user){closeModal('payment');showModal('login');return;}
+  // In production: redirect to PayPal subscription link
+  // window.open('https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=YOUR_PLAN_ID','_blank');
+  // For demo: simulate activation
+  closeModal('payment');
+  setTimeout(()=>{activatePro(user);},400);
+  toast('Redirecting to PayPal...');
+}
+
+function handleCrypto(){
+  const user=getCurrentUser();
+  if(!user){closeModal('payment');showModal('login');return;}
+  // In production: redirect to Binance Pay checkout
+  // window.open('https://pay.binance.com/en/checkout/YOUR_ORDER_ID','_blank');
+  toast('Opening Binance Pay...');
+  closeModal('payment');
+  setTimeout(()=>{activatePro(user);},600);
+}
+
+// ============================================================
+// TAX CALCULATION — 2025/26 rates
+// ============================================================
+const RATES={
+  england:{
+    pa:12570,
+    bands:[
+      {from:12570,to:50270,rate:0.20,label:'Basic rate (20%)'},
+      {from:50270,to:125140,rate:0.40,label:'Higher rate (40%)'},
+      {from:125140,to:Infinity,rate:0.45,label:'Additional rate (45%)'},
+    ]
+  },
+  scotland:{
+    pa:12570,
+    bands:[
+      {from:12570,to:15397,rate:0.19,label:'Starter rate (19%)'},
+      {from:15397,to:27491,rate:0.20,label:'Basic rate (20%)'},
+      {from:27491,to:43662,rate:0.21,label:'Intermediate rate (21%)'},
+      {from:43662,to:75000,rate:0.42,label:'Higher rate (42%)'},
+      {from:75000,to:125140,rate:0.45,label:'Advanced rate (45%)'},
+      {from:125140,to:Infinity,rate:0.48,label:'Top rate (48%)'},
+    ]
+  }
+};
+
+const NI_LOWER=12570,NI_UPPER=50270,NI_MAIN=0.08,NI_UPPER_RATE=0.02;
+
+const SL_THRESHOLDS={
+  plan1:{threshold:24990,rate:0.09,label:'Plan 1'},
+  plan2:{threshold:27295,rate:0.09,label:'Plan 2'},
+  plan4:{threshold:31395,rate:0.09,label:'Plan 4 (Scotland)'},
+  plan5:{threshold:25000,rate:0.09,label:'Plan 5'},
+};
+
+function calcPA(grossAfterPension){
+  if(grossAfterPension<=100000) return 12570;
+  if(grossAfterPension>=125140) return 0;
+  return 12570-Math.floor((grossAfterPension-100000)/2);
+}
+
+function calcTax(taxable,region){
+  if(taxable<=0) return 0;
+  let tax=0;
+  const bands=RATES[region].bands;
+  for(const b of bands){
+    if(taxable>b.from){
+      const inBand=Math.min(taxable,b.to)-b.from;
+      tax+=inBand*b.rate;
+    }
+  }
+  return tax;
+}
+
+function calcNI(gross){
+  if(gross<=NI_LOWER) return 0;
+  let ni=0;
+  if(gross>NI_LOWER){
+    const main=Math.min(gross,NI_UPPER)-NI_LOWER;
+    ni+=main*NI_MAIN;
+  }
+  if(gross>NI_UPPER) ni+=(gross-NI_UPPER)*NI_UPPER_RATE;
+  return ni;
+}
+
+function fmt(n){return'£'+Math.round(n).toLocaleString('en-GB')}
+
+function calculate(){
+  const salaryRaw=parseFloat(document.getElementById('salary').value)||0;
+  const freq=document.getElementById('freq').value;
+  const region=document.getElementById('region').value;
+  const slPlan=document.getElementById('studentLoan').value;
+  const pensionPct=parseFloat(document.getElementById('pension').value)||0;
+
+  let annualGross=salaryRaw;
+  if(freq==='monthly') annualGross=salaryRaw*12;
+  if(freq==='weekly') annualGross=salaryRaw*52;
+  if(freq==='daily') annualGross=salaryRaw*260;
+
+  if(!annualGross||annualGross<0){toast('Please enter your salary.');return;}
+
+  const uses=getUses();
+  const user=getCurrentUser();
+  const isPro=user&&user.paid;
+
+  if(!isPro){
+    if(uses>=3){
+      // show results but lock breakdown
+      document.getElementById('results').classList.add('show');
+      document.getElementById('lockGate').style.display='flex';
+      document.getElementById('breakdownContent').classList.add('lock-blur');
+      document.getElementById('proFeatures').style.display='none';
+    } else {
+      incUses();
+      updateUsesDots();
+      document.getElementById('lockGate').style.display='none';
+      document.getElementById('breakdownContent').classList.remove('lock-blur');
+    }
+  } else {
+    document.getElementById('lockGate').style.display='none';
+    document.getElementById('breakdownContent').classList.remove('lock-blur');
+    document.getElementById('proFeatures').style.display='flex';
+    // update calc count
+    const users2=getUsers();
+    const idx=users2.findIndex(u=>u.email===user.email);
+    if(idx>-1){users2[idx].calcs=(users2[idx].calcs||0)+1;users2[idx].lastActive=new Date().toISOString();saveUsers(users2);}
+  }
+
+  const pensionAmt=annualGross*(pensionPct/100);
+  const grossAfterPension=annualGross-pensionAmt;
+  const pa=calcPA(grossAfterPension);
+  const taxable=Math.max(0,grossAfterPension-pa);
+  const incomeTax=calcTax(taxable,region);
+  const ni=calcNI(annualGross);
+
+  let sl=0;
+  if(slPlan!=='none'&&SL_THRESHOLDS[slPlan]){
+    const s=SL_THRESHOLDS[slPlan];
+    if(annualGross>s.threshold) sl=(annualGross-s.threshold)*s.rate;
+  }
+
+  const totalDeductions=incomeTax+ni+pensionAmt+sl;
+  const takeHome=annualGross-totalDeductions;
+  const effRate=annualGross>0?((incomeTax/annualGross)*100).toFixed(1):0;
+
+  // basic band for bar chart
+  const basicTaxable=Math.min(Math.max(0,taxable),37700);
+  const higherTaxable=Math.max(0,Math.min(taxable,125140-12570)-37700);
+
+  // Update DOM
+  document.getElementById('takeHomeAmount').textContent=fmt(takeHome);
+  document.getElementById('takeHomePeriod').textContent=`${fmt(takeHome/12)}/month · ${fmt(takeHome/52)}/week`;
+  document.getElementById('r-tax').textContent=fmt(incomeTax);
+  document.getElementById('r-tax-eff').textContent=effRate+'% effective rate';
+  document.getElementById('r-ni').textContent=fmt(ni);
+  document.getElementById('r-gross').textContent=fmt(annualGross);
+  document.getElementById('r-gross-sub').textContent='Annual gross';
+
+  document.getElementById('bd-gross').textContent=fmt(annualGross);
+  document.getElementById('bd-pension').textContent='−'+fmt(pensionAmt);
+  document.getElementById('bd-pa').textContent=fmt(pa);
+  document.getElementById('bd-taxable').textContent=fmt(taxable);
+  document.getElementById('bd-basic').textContent='−'+fmt(Math.min(taxable,37700)*0.20);
+
+  const higherTax=region==='england'?Math.max(0,Math.min(taxable-37700,125140-50270))*0.40:0;
+  const additTax=region==='england'?Math.max(0,taxable-(125140-12570))*0.45:0;
+  document.getElementById('bd-higher').textContent='−'+fmt(higherTax);
+  document.getElementById('bd-additional').textContent='−'+fmt(additTax);
+  document.getElementById('higherRow').style.display=higherTax>0?'flex':'none';
+  document.getElementById('additionalRow').style.display=additTax>0?'flex':'none';
+
+  document.getElementById('bd-ni').textContent='−'+fmt(ni);
+  document.getElementById('bd-takehome').innerHTML='<strong>'+fmt(takeHome)+'</strong>';
+
+  if(slPlan!=='none'&&sl>0){
+    document.getElementById('slRow').style.display='flex';
+    document.getElementById('bd-sl').textContent='−'+fmt(sl);
+    document.getElementById('slPlanLabel').textContent=SL_THRESHOLDS[slPlan].label;
+  } else {
+    document.getElementById('slRow').style.display='none';
+  }
+
+  document.getElementById('p-annual').textContent=fmt(takeHome);
+  document.getElementById('p-monthly').textContent=fmt(takeHome/12);
+  document.getElementById('p-weekly').textContent=fmt(takeHome/52);
+  document.getElementById('p-daily').textContent=fmt(takeHome/260);
+
+  // Band bars
+  const gMax=annualGross||1;
+  const paWidth=Math.min(pa/gMax*100,100);
+  const bWidth=Math.min(basicTaxable/gMax*100,100);
+  const hWidth=Math.min(higherTaxable/gMax*100,100);
+  document.getElementById('bf-pa').style.width=paWidth+'%';
+  document.getElementById('bv-pa').textContent=fmt(pa);
+  document.getElementById('bf-basic').style.width=bWidth+'%';
+  document.getElementById('bv-basic').textContent=fmt(basicTaxable);
+  document.getElementById('bf-higher').style.width=hWidth+'%';
+  document.getElementById('bv-higher').textContent=fmt(higherTaxable);
+
+  // Store last calculation for download
+  lastCalcData={annualGross,takeHome,incomeTax,ni,pensionAmt,sl,pa,taxable,region};
+
+  // Show download row for pro users
+  const dlRow=document.getElementById('downloadRow');
+  if(getCurrentUser()&&getCurrentUser().paid){
+    dlRow.style.display='flex';
+  } else {
+    dlRow.style.display='none';
+  }
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function renderAdmin(){
+  const users=getUsers();
+  const paid=users.filter(u=>u.paid).length;
+  const today=users.filter(u=>{const d=new Date(u.lastActive);return(Date.now()-d)<86400000}).length;
+
+  document.getElementById('adminStats').innerHTML=`
+    <div class="astat"><div class="as-n">${users.length}</div><div class="as-l">Total users</div></div>
+    <div class="astat"><div class="as-n">${paid}</div><div class="as-l">Pro subscribers</div></div>
+    <div class="astat"><div class="as-n">${users.length-paid}</div><div class="as-l">Free users</div></div>
+    <div class="astat"><div class="as-n">${today}</div><div class="as-l">Active today</div></div>
+  `;
+
+  const tbody=document.getElementById('adminTableBody');
+  const empty=document.getElementById('adminEmpty');
+
+  if(!users.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+
+  tbody.innerHTML=users.map((u,i)=>`
+    <tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td>${u.email}</td>
+      <td>${u.name||'—'}</td>
+      <td>${new Date(u.signedUp).toLocaleDateString('en-GB')}</td>
+      <td><span class="${u.paid?'badge-paid':'badge-free'}">${u.paid?'Pro':'Free'}</span></td>
+      <td style="color:var(--muted)">${u.plan||'free'}</td>
+      <td style="color:var(--muted)">${u.calcs||0}</td>
+      <td style="color:var(--muted)">${new Date(u.lastActive).toLocaleDateString('en-GB')}</td>
+    </tr>
+  `).join('');
+}
+
+function exportCSV(){
+  const users=getUsers();
+  if(!users.length){toast('No users to export.');return;}
+  const headers=['ID','Email','Name','Signed Up','Status','Plan','Calculations','Last Active'];
+  const rows=users.map(u=>[u.id,u.email,u.name||'',new Date(u.signedUp).toLocaleDateString('en-GB'),u.paid?'Pro':'Free',u.plan||'free',u.calcs||0,new Date(u.lastActive).toLocaleDateString('en-GB')]);
+  const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='payecalc_users_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  toast('CSV exported!');
+}
+
+// ============================================================
+// FAQ
+// ============================================================
+function toggleFaq(el){el.closest('.faq-item').classList.toggle('open')}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  updateNav();
+  updateUsesDots();
+  // close modals on bg click
+  document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg){const id=bg.id.replace('Modal','');closeModal(id)}}));
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+// ============================================================
+// DOWNLOAD FUNCTIONS
+// ============================================================
+let lastCalcData = null;
+
+function downloadPDF(){
+  const user = getCurrentUser();
+  if(!user || !user.paid){ toast('Upgrade to Pro to download PDF reports.'); showModal('payment'); return; }
+  if(!lastCalcData){ toast('Please run a calculation first.'); return; }
+  const d = lastCalcData;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const navy=[11,28,61], gold=[184,150,78], green=[26,127,79], red=[200,16,46], muted=[107,114,128], offwhite=[243,241,238];
+  const W=210, margin=20;
+
+  // Header bar
+  doc.setFillColor(...navy);
+  doc.rect(0,0,W,28,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.setTextColor(255,255,255);
+  doc.text('PAYECalc', margin, 12);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...gold);
+  doc.text('UK PAYE Tax Report — Tax Year 2025/26', margin, 19);
+  doc.setTextColor(180,180,180);
+  doc.text('Generated: '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}), W-margin, 19, {align:'right'});
+
+  // User info
+  doc.setFontSize(9);
+  doc.setTextColor(...muted);
+  doc.text('Prepared for: '+(user.name||user.email), margin, 35);
+
+  // Take home hero box
+  doc.setFillColor(...offwhite);
+  doc.roundedRect(margin, 40, W-margin*2, 28, 3, 3, 'F');
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...muted);
+  doc.text('ANNUAL TAKE-HOME PAY', margin+6, 50);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(22);
+  doc.setTextColor(...navy);
+  doc.text(fmt(d.takeHome), margin+6, 62);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...muted);
+  doc.text(fmt(d.takeHome/12)+'/month   '+fmt(d.takeHome/52)+'/week   '+fmt(d.takeHome/260)+'/day', margin+6, 68);
+
+  // Summary boxes
+  const boxW=(W-margin*2-8)/3;
+  const boxes=[
+    {label:'GROSS SALARY', val:fmt(d.annualGross), color:navy},
+    {label:'INCOME TAX', val:fmt(d.incomeTax), color:red},
+    {label:'NATIONAL INSURANCE', val:fmt(d.ni), color:red},
+  ];
+  boxes.forEach((b,i)=>{
+    const x=margin+i*(boxW+4);
+    doc.setFillColor(...offwhite);
+    doc.roundedRect(x,75,boxW,20,2,2,'F');
+    doc.setFontSize(7);
+    doc.setTextColor(...muted);
+    doc.setFont('helvetica','normal');
+    doc.text(b.label, x+4, 82);
+    doc.setFontSize(11);
+    doc.setTextColor(...b.color);
+    doc.setFont('helvetica','bold');
+    doc.text(b.val, x+4, 91);
+  });
+
+  // Detailed breakdown table
+  let y=105;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...navy);
+  doc.text('Detailed Breakdown', margin, y);
+  y+=6;
+
+  // Table header
+  doc.setFillColor(...navy);
+  doc.rect(margin, y, W-margin*2, 7, 'F');
+  doc.setFontSize(8);
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.text('Description', margin+4, y+5);
+  doc.text('Annual', W-margin-40, y+5);
+  doc.text('Monthly', W-margin-16, y+5, {align:'right'});
+  y+=7;
+
+  const rows=[
+    ['Gross salary', d.annualGross, d.annualGross/12, false],
+    ['Personal allowance (tax-free)', d.pa, d.pa/12, false],
+    ['Taxable income', d.taxable, d.taxable/12, false],
+    ['Income tax', d.incomeTax, d.incomeTax/12, true],
+    ['National Insurance (Class 1)', d.ni, d.ni/12, true],
+    d.pensionAmt>0 ? ['Pension contribution', d.pensionAmt, d.pensionAmt/12, true] : null,
+    d.sl>0 ? ['Student loan repayment', d.sl, d.sl/12, true] : null,
+    ['Take-home pay', d.takeHome, d.takeHome/12, false],
+  ].filter(Boolean);
+
+  rows.forEach((row,i)=>{
+    const isLast = i===rows.length-1;
+    const bg = isLast ? [...navy] : (i%2===0 ? [255,255,255] : [...offwhite]);
+    doc.setFillColor(...bg);
+    doc.rect(margin, y, W-margin*2, 8, 'F');
+    doc.setFontSize(8.5);
+    if(isLast){
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(255,255,255);
+      doc.text(row[0], margin+4, y+5.5);
+      doc.text(fmt(row[1]), W-margin-40, y+5.5);
+      doc.text(fmt(row[2]), W-margin-2, y+5.5, {align:'right'});
+    } else {
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(row[3] ? ...red : ...navy);
+      doc.text(row[0], margin+4, y+5.5);
+      doc.setTextColor(row[3] ? ...red : ...navy);
+      doc.text((row[3]?'−':'')+fmt(row[1]), W-margin-40, y+5.5);
+      doc.text((row[3]?'−':'')+fmt(row[2]), W-margin-2, y+5.5, {align:'right'});
+    }
+    y+=8;
+  });
+
+  // Periods table
+  y+=8;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...navy);
+  doc.text('Take-Home Pay by Period', margin, y);
+  y+=6;
+  doc.setFillColor(...navy);
+  doc.rect(margin, y, W-margin*2, 7, 'F');
+  doc.setFontSize(8);
+  doc.setTextColor(255,255,255);
+  doc.text('Period', margin+4, y+5);
+  doc.text('Take-home', W-margin-2, y+5, {align:'right'});
+  y+=7;
+  [['Annual',d.takeHome],['Monthly',d.takeHome/12],['Weekly',d.takeHome/52],['Daily',d.takeHome/260]].forEach(([p,v],i)=>{
+    doc.setFillColor(i%2===0?255:...offwhite);
+    doc.rect(margin,y,W-margin*2,8,'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...navy);
+    doc.text(p, margin+4, y+5.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...green);
+    doc.text(fmt(v), W-margin-2, y+5.5, {align:'right'});
+    y+=8;
+  });
+
+  // Footer
+  doc.setFillColor(...navy);
+  doc.rect(0,282,W,15,'F');
+  doc.setFontSize(7);
+  doc.setTextColor(180,180,180);
+  doc.text('PAYECalc · payecalc.co.uk · Tax Year 2025/26 · Rates sourced from HMRC · Not financial advice', W/2, 290, {align:'center'});
+
+  doc.save('PAYECalc-Report-'+new Date().toISOString().split('T')[0]+'.pdf');
+  toast('PDF downloaded!');
+}
+
+function downloadCSV(){
+  const user = getCurrentUser();
+  if(!user || !user.paid){ toast('Upgrade to Pro to download reports.'); showModal('payment'); return; }
+  if(!lastCalcData){ toast('Please run a calculation first.'); return; }
+  const d = lastCalcData;
+  const rows=[
+    ['PAYECalc Tax Report — 2025/26'],
+    ['Generated', new Date().toLocaleDateString('en-GB')],
+    [''],
+    ['Description','Annual','Monthly','Weekly','Daily'],
+    ['Gross Salary',d.annualGross,(d.annualGross/12).toFixed(2),(d.annualGross/52).toFixed(2),(d.annualGross/260).toFixed(2)],
+    ['Personal Allowance',d.pa,'','',''],
+    ['Taxable Income',d.taxable,'','',''],
+    ['Income Tax',d.incomeTax,(d.incomeTax/12).toFixed(2),'',''],
+    ['National Insurance',d.ni,(d.ni/12).toFixed(2),'',''],
+    d.pensionAmt>0?['Pension Contribution',d.pensionAmt,(d.pensionAmt/12).toFixed(2),'','']:null,
+    d.sl>0?['Student Loan',d.sl,(d.sl/12).toFixed(2),'','']:null,
+    ['Take-Home Pay',d.takeHome,(d.takeHome/12).toFixed(2),(d.takeHome/52).toFixed(2),(d.takeHome/260).toFixed(2)],
+  ].filter(Boolean);
+  const csv=rows.map(r=>r.map(v=>'"'+String(v)+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='PAYECalc-Report-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  toast('CSV downloaded!');
+}
+</script>
+</body>
+</html>

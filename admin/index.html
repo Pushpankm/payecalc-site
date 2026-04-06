@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<title>Admin — PAYECalc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1C3D;--navy2:#132848;--red:#C8102E;--gold:#B8964E;
+  --white:#FAFAF8;--off:#F3F1EE;--muted:#6B7280;--border:#E2DDD6;
+  --green:#1A7F4F;--text:#1C1C1C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);min-height:100vh}
+
+/* LOGIN SCREEN */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--navy)}
+.login-card{background:var(--white);border-radius:16px;padding:2.5rem;width:100%;max-width:380px}
+.login-logo{font-family:'Fraunces',serif;font-size:22px;color:var(--navy);font-weight:600;margin-bottom:.25rem}
+.login-logo span{color:var(--gold)}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
+.field{margin-bottom:1rem}
+.field label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:5px}
+.field input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;background:var(--white);color:var(--text)}
+.field input:focus{border-color:var(--navy)}
+.login-btn{width:100%;padding:12px;background:var(--navy);color:var(--white);border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.5rem}
+.login-btn:hover{background:var(--navy2)}
+.err{color:var(--red);font-size:12px;margin-top:8px;display:none;text-align:center}
+.attempt-warn{font-size:12px;color:var(--muted);text-align:center;margin-top:.75rem}
+
+/* DASHBOARD */
+.dashboard{display:none;min-height:100vh;flex-direction:column}
+.topbar{background:var(--navy);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:10}
+.topbar-logo{font-family:'Fraunces',serif;font-size:17px;color:var(--white);font-weight:600}
+.topbar-logo span{color:var(--gold)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.admin-name{font-size:13px;color:rgba(255,255,255,0.55)}
+.topbar-btn{background:transparent;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.7);padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.topbar-btn:hover{border-color:rgba(255,255,255,0.6);color:var(--white)}
+.topbar-btn.danger{border-color:rgba(200,16,46,0.4);color:#f87171}
+.topbar-btn.danger:hover{background:rgba(200,16,46,0.15)}
+
+.content{padding:2rem;max-width:1100px;margin:0 auto;width:100%;flex:1}
+.page-title{font-family:'Fraunces',serif;font-size:1.7rem;margin-bottom:.3rem}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+@media(max-width:700px){.stats-grid{grid-template-columns:1fr 1fr}}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.stat-card .sc-n{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;color:var(--navy)}
+.stat-card .sc-l{font-size:12px;color:var(--muted);margin-top:2px}
+.stat-card .sc-change{font-size:11px;margin-top:6px;color:var(--green)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab-btn{padding:8px 16px;border:none;background:transparent;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:500}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* TABLE */
+.table-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:10px;flex-wrap:wrap}
+.search-input{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;width:220px}
+.search-input:focus{border-color:var(--navy)}
+.toolbar-right{display:flex;gap:8px}
+.tbtn{padding:7px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.tbtn-outline{background:var(--white);border:1.5px solid var(--border);color:var(--text)}
+.tbtn-navy{background:var(--navy);border:none;color:var(--white)}
+.tbtn-red{background:transparent;border:1.5px solid rgba(200,16,46,0.3);color:var(--red)}
+.tbtn-outline:hover{background:var(--off)}
+.tbtn-navy:hover{background:var(--navy2)}
+
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--off)}
+th{text-align:left;padding:.65rem 1rem;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+th.sort-asc::after{content:' ↑'}
+th.sort-desc::after{content:' ↓'}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border);color:var(--text);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(11,28,61,0.02)}
+.empty-row td{text-align:center;padding:2.5rem;color:var(--muted)}
+
+/* BADGES */
+.badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500;display:inline-block}
+.badge-pro{background:rgba(26,127,79,0.1);color:var(--green);border:1px solid rgba(26,127,79,0.25)}
+.badge-free{background:var(--off);color:var(--muted);border:1px solid var(--border)}
+.badge-new{background:rgba(184,150,78,0.12);color:var(--gold);border:1px solid rgba(184,150,78,0.3)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem;border-top:1px solid var(--border);font-size:12px;color:var(--muted);background:var(--white)}
+.page-btns{display:flex;gap:4px}
+.page-btn{padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:var(--white);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.page-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* USER DETAIL MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:var(--white);border-radius:14px;padding:2rem;width:100%;max-width:440px;position:relative}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)}
+.modal h2{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:1.25rem}
+.detail-row{display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-row .dl{color:var(--muted)}
+.detail-row .dv{font-weight:500;text-align:right}
+.modal-actions{display:flex;gap:8px;margin-top:1.25rem}
+
+/* REVENUE */
+.rev-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.5rem}
+@media(max-width:600px){.rev-cards{grid-template-columns:1fr}}
+.rev-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.rev-card .rv-n{font-size:1.4rem;font-weight:600;color:var(--navy);font-family:'Fraunces',serif}
+.rev-card .rv-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 20px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* CHANGE PASSWORD */
+.settings-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.5rem;max-width:440px;margin-bottom:1.5rem}
+.settings-card h3{font-size:15px;font-weight:500;margin-bottom:1rem}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">PAYE<span>Calc</span></div>
+    <div class="login-sub">Admin access only — authorised personnel</div>
+    <div class="field">
+      <label>Admin username</label>
+      <input type="text" id="adminUser" placeholder="admin" autocomplete="off" autocapitalize="none">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <div class="err" id="loginErr">Incorrect credentials. Try again.</div>
+    <button class="login-btn" onclick="doAdminLogin()">Sign in to dashboard</button>
+    <div class="attempt-warn" id="attemptWarn"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="topbar">
+    <div class="topbar-logo">PAYE<span>Calc</span> <span style="font-size:11px;color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;font-weight:300;margin-left:4px">Admin</span></div>
+    <div class="topbar-right">
+      <span class="admin-name" id="adminNameDisplay"></span>
+      <a href="../" target="_blank" class="topbar-btn">View site →</a>
+      <button class="topbar-btn danger" onclick="doAdminLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub" id="dashDate"></div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('users',this)">Users</button>
+      <button class="tab-btn" onclick="switchTab('revenue',this)">Revenue</button>
+      <button class="tab-btn" onclick="switchTab('settings',this)">Settings</button>
+    </div>
+
+    <!-- USERS TAB -->
+    <div class="tab-panel active" id="tab-users">
+      <div class="table-toolbar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by email or name..." oninput="filterUsers()">
+        <div class="toolbar-right">
+          <select id="statusFilter" onchange="filterUsers()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--white);outline:none">
+            <option value="all">All users</option>
+            <option value="pro">Pro only</option>
+            <option value="free">Free only</option>
+          </select>
+          <button class="tbtn tbtn-outline" onclick="renderUsersTable()">Refresh</button>
+          <button class="tbtn tbtn-navy" onclick="exportCSV()">Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortBy('id')">#</th>
+                <th onclick="sortBy('email')">Email</th>
+                <th onclick="sortBy('name')">Name</th>
+                <th onclick="sortBy('signedUp')">Signed up</th>
+                <th onclick="sortBy('paid')">Status</th>
+                <th onclick="sortBy('calcs')">Calcs</th>
+                <th onclick="sortBy('lastActive')">Last active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="paginationBar"></div>
+      </div>
+    </div>
+
+    <!-- REVENUE TAB -->
+    <div class="tab-panel" id="tab-revenue">
+      <div class="rev-cards" id="revCards"></div>
+      <div class="table-wrap">
+        <div style="padding:.9rem 1rem;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">Paid subscribers</div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Subscribed since</th>
+                <th>Monthly value</th>
+              </tr>
+            </thead>
+            <tbody id="paidTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="settings-card">
+        <h3>Change admin password</h3>
+        <div class="field">
+          <label>Current password</label>
+          <input type="password" id="currentPass" placeholder="••••••••">
+        </div>
+        <div class="field">
+          <label>New password</label>
+          <input type="password" id="newPass" placeholder="Min 8 characters">
+        </div>
+        <div class="field">
+          <label>Confirm new password</label>
+          <input type="password" id="confirmPass" placeholder="Repeat new password">
+        </div>
+        <button class="tbtn tbtn-navy" style="margin-top:.5rem" onclick="changePassword()">Update password</button>
+        <div style="font-size:12px;color:var(--muted);margin-top:.75rem">Password is stored locally. In production, move to a server-side auth system.</div>
+      </div>
+      <div class="settings-card">
+        <h3>Admin credentials</h3>
+        <div class="detail-row"><span class="dl">Username</span><span class="dv" id="currentAdminUser"></span></div>
+        <div class="detail-row"><span class="dl">Session timeout</span><span class="dv">2 hours</span></div>
+        <div class="detail-row"><span class="dl">Admin URL</span><span class="dv">/admin/ — not linked on site</span></div>
+        <div class="detail-row"><span class="dl">Google indexing</span><span class="dv" style="color:var(--green)">Blocked (noindex)</span></div>
+      </div>
+      <div class="settings-card">
+        <h3>Danger zone</h3>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Permanently delete all user data stored in this browser. Cannot be undone.</div>
+        <button class="tbtn tbtn-red" onclick="clearAllData()">Clear all user data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div class="modal-bg" id="userModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeUserModal()">×</button>
+    <h2 id="modalTitle">User details</h2>
+    <div id="modalContent"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG — CHANGE THESE CREDENTIALS
+// ============================================================
+const ADMIN_CREDS_KEY='payecalc_admin_creds';
+const SESSION_KEY='payecalc_admin_session';
+const SESSION_TIMEOUT=2*60*60*1000; // 2 hours
+
+function getAdminCreds(){
+  try{
+    const stored=JSON.parse(localStorage.getItem(ADMIN_CREDS_KEY)||'null');
+    if(stored)return stored;
+  }catch{}
+  // Default credentials — CHANGE ON FIRST LOGIN
+  return{username:'admin',password:btoa('PAYECalc2026!')};
+}
+
+function saveAdminCreds(u,p){
+  localStorage.setItem(ADMIN_CREDS_KEY,JSON.stringify({username:u,password:btoa(p)}));
+}
+
+// ============================================================
+// SESSION MANAGEMENT
+// ============================================================
+let failedAttempts=0;
+let lockUntil=0;
+
+function isSessionValid(){
+  try{
+    const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
+    if(!s)return false;
+    if(Date.now()-s.loginTime>SESSION_TIMEOUT){localStorage.removeItem(SESSION_KEY);return false;}
+    return s;
+  }catch{return false;}
+}
+
+function createSession(username){
+  const s={username,loginTime:Date.now()};
+  localStorage.setItem(SESSION_KEY,JSON.stringify(s));
+  return s;
+}
+
+function destroySession(){
+  localStorage.removeItem(SESSION_KEY);
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function doAdminLogin(){
+  const now=Date.now();
+  if(lockUntil>now){
+    const secs=Math.ceil((lockUntil-now)/1000);
+    document.getElementById('loginErr').textContent=`Too many attempts. Try again in ${secs}s.`;
+    document.getElementById('loginErr').style.display='block';
+    return;
+  }
+
+  const user=document.getElementById('adminUser').value.trim();
+  const pass=document.getElementById('adminPass').value;
+  const creds=getAdminCreds();
+
+  if(user===creds.username && btoa(pass)===creds.password){
+    failedAttempts=0;
+    document.getElementById('loginErr').style.display='none';
+    createSession(user);
+    showDashboard(user);
+  } else {
+    failedAttempts++;
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('loginErr').textContent='Incorrect credentials. Try again.';
+    if(failedAttempts>=5){
+      lockUntil=now+30000;
+      document.getElementById('attemptWarn').textContent='Account locked for 30 seconds after too many attempts.';
+      setTimeout(()=>{document.getElementById('attemptWarn').textContent='';lockUntil=0;},30000);
+    } else if(failedAttempts>=3){
+      document.getElementById('attemptWarn').textContent=`${5-failedAttempts} attempt(s) remaining before lockout.`;
+    }
+  }
+}
+
+function doAdminLogout(){
+  destroySession();
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('adminUser').value='';
+  document.getElementById('adminPass').value='';
+  failedAttempts=0;
+}
+
+function showDashboard(username){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dashboard').style.display='flex';
+  document.getElementById('adminNameDisplay').textContent=username;
+  document.getElementById('currentAdminUser').textContent=username;
+  document.getElementById('dashDate').textContent='Last updated: '+new Date().toLocaleString('en-GB',{dateStyle:'long',timeStyle:'short'});
+  renderStats();
+  renderUsersTable();
+  renderRevenue();
+}
+
+// ============================================================
+// DATA
+// ============================================================
+function getUsers(){try{return JSON.parse(localStorage.getItem('payecalc_users')||'[]')}catch{return[]}}
+
+let currentPage=1;
+const PER_PAGE=15;
+let sortField='signedUp';
+let sortDir='desc';
+let filteredUsers=[];
+
+function renderStats(){
+  const users=getUsers();
+  const paid=users.filter(u=>u.paid).length;
+  const today=users.filter(u=>(Date.now()-new Date(u.lastActive))<86400000).length;
+  const thisWeek=users.filter(u=>(Date.now()-new Date(u.signedUp))<7*86400000).length;
+
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card"><div class="sc-l">Total users</div><div class="sc-n">${users.length}</div><div class="sc-change">+${thisWeek} this week</div></div>
+    <div class="stat-card"><div class="sc-l">Pro subscribers</div><div class="sc-n">${paid}</div><div class="sc-change" style="color:var(--gold)">£${(paid*3.99).toFixed(2)} MRR</div></div>
+    <div class="stat-card"><div class="sc-l">Free users</div><div class="sc-n">${users.length-paid}</div></div>
+    <div class="stat-card"><div class="sc-l">Active today</div><div class="sc-n">${today}</div></div>
+  `;
+}
+
+function filterUsers(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const status=document.getElementById('statusFilter').value;
+  let users=getUsers();
+  if(q) users=users.filter(u=>(u.email||'').toLowerCase().includes(q)||(u.name||'').toLowerCase().includes(q));
+  if(status==='pro') users=users.filter(u=>u.paid);
+  if(status==='free') users=users.filter(u=>!u.paid);
+  filteredUsers=users;
+  currentPage=1;
+  renderUsersTable(true);
+}
+
+function sortBy(field){
+  if(sortField===field) sortDir=sortDir==='asc'?'desc':'asc';
+  else{sortField=field;sortDir='asc';}
+  renderUsersTable(true);
+}
+
+function renderUsersTable(useFiltered){
+  if(!useFiltered) filteredUsers=getUsers();
+  const sorted=[...filteredUsers].sort((a,b)=>{
+    let va=a[sortField]||'',vb=b[sortField]||'';
+    if(sortField==='paid'){va=a.paid?1:0;vb=b.paid?1:0;}
+    if(sortField==='calcs'){va=a.calcs||0;vb=b.calcs||0;}
+    if(typeof va==='number') return sortDir==='asc'?va-vb:vb-va;
+    return sortDir==='asc'?String(va).localeCompare(String(vb)):String(vb).localeCompare(String(va));
+  });
+
+  const total=sorted.length;
+  const pages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>pages) currentPage=pages;
+  const start=(currentPage-1)*PER_PAGE;
+  const pageUsers=sorted.slice(start,start+PER_PAGE);
+
+  const tbody=document.getElementById('usersTableBody');
+  if(!pageUsers.length){
+    tbody.innerHTML='<tr class="empty-row"><td colspan="8">No users found.</td></tr>';
+  } else {
+    tbody.innerHTML=pageUsers.map((u,i)=>{
+      const daysAgo=Math.floor((Date.now()-new Date(u.lastActive))/86400000);
+      const isNew=(Date.now()-new Date(u.signedUp))<3*86400000;
+      return`<tr>
+        <td style="color:var(--muted)">${start+i+1}</td>
+        <td>${u.email}${isNew?'<span class="badge badge-new" style="margin-left:6px">New</span>':''}</td>
+        <td>${u.name||'—'}</td>
+        <td>${new Date(u.signedUp).toLocaleDateString('en-GB')}</td>
+        <td><span class="badge ${u.paid?'badge-pro':'badge-free'}">${u.paid?'Pro':'Free'}</span></td>
+        <td style="color:var(--muted)">${u.calcs||0}</td>
+        <td style="color:var(--muted)">${daysAgo===0?'Today':daysAgo===1?'Yesterday':daysAgo+'d ago'}</td>
+        <td>
+          <button class="tbtn tbtn-outline" style="font-size:11px;padding:4px 10px" onclick="viewUser(${u.id})">View</button>
+          ${u.paid?`<button class="tbtn tbtn-red" style="font-size:11px;padding:4px 10px;margin-left:4px" onclick="revokeUser(${u.id})">Revoke</button>`:`<button class="tbtn tbtn-navy" style="font-size:11px;padding:4px 10px;margin-left:4px" onclick="grantUser(${u.id})">Grant Pro</button>`}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Pagination
+  let pagBtns='';
+  for(let p=1;p<=pages;p++){
+    if(p===1||p===pages||Math.abs(p-currentPage)<=1){
+      pagBtns+=`<button class="page-btn${p===currentPage?' active':''}" onclick="goPage(${p})">${p}</button>`;
+    } else if(Math.abs(p-currentPage)===2){
+      pagBtns+='<span style="padding:4px 4px;font-size:12px;color:var(--muted)">…</span>';
+    }
+  }
+  document.getElementById('paginationBar').innerHTML=`
+    <span>Showing ${Math.min(start+1,total)}–${Math.min(start+PER_PAGE,total)} of ${total} users</span>
+    <div class="page-btns">
+      <button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>
+      ${pagBtns}
+      <button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>
+    </div>
+  `;
+
+  renderStats();
+}
+
+function goPage(p){currentPage=p;renderUsersTable(true);}
+
+function renderRevenue(){
+  const users=getUsers();
+  const paid=users.filter(u=>u.paid);
+  const mrr=paid.length*3.99;
+  const arr=mrr*12;
+
+  document.getElementById('revCards').innerHTML=`
+    <div class="rev-card"><div class="rv-l">Monthly recurring</div><div class="rv-n">£${mrr.toFixed(2)}</div></div>
+    <div class="rev-card"><div class="rv-l">Annual run rate</div><div class="rv-n">£${arr.toFixed(0)}</div></div>
+    <div class="rev-card"><div class="rv-l">Avg per user</div><div class="rv-n">£${users.length?((mrr)/Math.max(users.length,1)).toFixed(2):'0.00'}</div></div>
+  `;
+
+  const tbody=document.getElementById('paidTableBody');
+  if(!paid.length){
+    tbody.innerHTML='<tr class="empty-row"><td colspan="5">No paid subscribers yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=paid.map(u=>`
+    <tr>
+      <td>${u.email}</td>
+      <td>${u.name||'—'}</td>
+      <td><span class="badge badge-pro">Pro</span></td>
+      <td>${new Date(u.signedUp).toLocaleDateString('en-GB')}</td>
+      <td style="font-weight:500;color:var(--green)">£3.99</td>
+    </tr>
+  `).join('');
+}
+
+// ============================================================
+// USER ACTIONS
+// ============================================================
+function viewUser(id){
+  const users=getUsers();
+  const u=users.find(u=>u.id===id);
+  if(!u)return;
+  document.getElementById('modalTitle').textContent=u.name||u.email;
+  document.getElementById('modalContent').innerHTML=`
+    <div class="detail-row"><span class="dl">Email</span><span class="dv">${u.email}</span></div>
+    <div class="detail-row"><span class="dl">Name</span><span class="dv">${u.name||'—'}</span></div>
+    <div class="detail-row"><span class="dl">Status</span><span class="dv"><span class="badge ${u.paid?'badge-pro':'badge-free'}">${u.paid?'Pro':'Free'}</span></span></div>
+    <div class="detail-row"><span class="dl">Plan</span><span class="dv">${u.plan||'free'}</span></div>
+    <div class="detail-row"><span class="dl">Calculations run</span><span class="dv">${u.calcs||0}</span></div>
+    <div class="detail-row"><span class="dl">Signed up</span><span class="dv">${new Date(u.signedUp).toLocaleString('en-GB')}</span></div>
+    <div class="detail-row"><span class="dl">Last active</span><span class="dv">${new Date(u.lastActive).toLocaleString('en-GB')}</span></div>
+    <div class="detail-row"><span class="dl">User ID</span><span class="dv" style="font-family:monospace;font-size:11px">${u.id}</span></div>
+  `;
+  document.getElementById('modalActions').innerHTML=`
+    ${u.paid
+      ?`<button class="tbtn tbtn-red" onclick="revokeUser(${id});closeUserModal()">Revoke Pro</button>`
+      :`<button class="tbtn tbtn-navy" onclick="grantUser(${id});closeUserModal()">Grant Pro</button>`}
+    <button class="tbtn tbtn-red" style="margin-left:auto" onclick="deleteUser(${id})">Delete user</button>
+  `;
+  document.getElementById('userModal').classList.add('show');
+}
+
+function closeUserModal(){document.getElementById('userModal').classList.remove('show');}
+
+function grantUser(id){
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.id===id);
+  if(idx>-1){users[idx].paid=true;users[idx].plan='pro';localStorage.setItem('payecalc_users',JSON.stringify(users));}
+  toast('Pro access granted.');renderUsersTable(true);renderRevenue();
+}
+
+function revokeUser(id){
+  if(!confirm('Revoke Pro access for this user?'))return;
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.id===id);
+  if(idx>-1){users[idx].paid=false;users[idx].plan='free';localStorage.setItem('payecalc_users',JSON.stringify(users));}
+  toast('Pro access revoked.');renderUsersTable(true);renderRevenue();
+}
+
+function deleteUser(id){
+  if(!confirm('Permanently delete this user? Cannot be undone.'))return;
+  const users=getUsers().filter(u=>u.id!==id);
+  localStorage.setItem('payecalc_users',JSON.stringify(users));
+  closeUserModal();
+  toast('User deleted.');renderUsersTable(true);renderRevenue();
+}
+
+function exportCSV(){
+  const users=getUsers();
+  if(!users.length){toast('No users to export.');return;}
+  const h=['ID','Email','Name','Signed Up','Status','Plan','Calculations','Last Active'];
+  const rows=users.map(u=>[
+    u.id,u.email,u.name||'',
+    new Date(u.signedUp).toLocaleDateString('en-GB'),
+    u.paid?'Pro':'Free',u.plan||'free',u.calcs||0,
+    new Date(u.lastActive).toLocaleDateString('en-GB')
+  ]);
+  const csv=[h,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='payecalc_users_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  toast('CSV exported — '+users.length+' users.');
+}
+
+function clearAllData(){
+  if(!confirm('DELETE ALL USER DATA? This cannot be undone.'))return;
+  if(!confirm('Are you absolutely sure? All user accounts will be lost.'))return;
+  localStorage.removeItem('payecalc_users');
+  toast('All user data cleared.');
+  renderUsersTable();renderRevenue();renderStats();
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function changePassword(){
+  const cur=document.getElementById('currentPass').value;
+  const nw=document.getElementById('newPass').value;
+  const conf=document.getElementById('confirmPass').value;
+  const creds=getAdminCreds();
+  if(btoa(cur)!==creds.password){toast('Current password is incorrect.');return;}
+  if(nw.length<8){toast('New password must be at least 8 characters.');return;}
+  if(nw!==conf){toast('Passwords do not match.');return;}
+  saveAdminCreds(creds.username,nw);
+  document.getElementById('currentPass').value='';
+  document.getElementById('newPass').value='';
+  document.getElementById('confirmPass').value='';
+  toast('Password updated successfully.');
+}
+
+// ============================================================
+// TABS & UI
+// ============================================================
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='revenue') renderRevenue();
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  // Auto-restore session
+  const session=isSessionValid();
+  if(session){
+    showDashboard(session.username);
+  }
+  // Enter key on password field
+  document.getElementById('adminPass').addEventListener('keydown',e=>{
+    if(e.key==='Enter') doAdminLogin();
+  });
+  // Close modal on bg click
+  document.getElementById('userModal').addEventListener('click',e=>{
+    if(e.target===document.getElementById('userModal')) closeUserModal();
+  });
+  // Auto-refresh session timer
+  setInterval(()=>{
+    const s=isSessionValid();
+    if(!s && document.getElementById('dashboard').style.display!=='none'){
+      doAdminLogout();
+      toast('Session expired. Please sign in again.');
+    }
+  },60000);
+});
+</script>
+</body>
+</html>

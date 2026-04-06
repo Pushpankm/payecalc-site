@@ -1,0 +1,6 @@
+# Admin routes — must be before catch-all
+/admin    /admin/index.html    200
+/admin/   /admin/index.html    200
+
+# Catch-all for main site
+/*        /index.html          200
